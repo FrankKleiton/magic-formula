@@ -1,32 +1,115 @@
-class Company {
-  private _ticket: string;
-  private _priceEarnings: number;
-  private _returnOnAsset: number;
+describe("magic formula", () => {
+  test("should apply price earnings filter", () => {
+    const data = [
+      new Company("eternit3", 2.5, 20),
+      new Company("eternit3", 2, 20),
+      new Company("eternit3", 5, 20),
+    ];
+    const formula = new MagicFormula(data);
 
-  constructor(ticket: string, priceEarnings: number, returnOnAsset: number) {
-    this._ticket = ticket;
-    this._priceEarnings = priceEarnings;
-    this._returnOnAsset = returnOnAsset;
-  }
+    formula.filterPriceEarnings(2.5, 4);
 
-  get ticket() {
-    return this._ticket;
-  }
+    formula.companies.forEach((c) => {
+      expect(c.priceEarnings >= 2.5).toBeTruthy();
+      expect(c.priceEarnings <= 4).toBeTruthy();
+    });
+  });
 
-  get priceEarnings() {
-    return this._priceEarnings;
-  }
+  test("should apply return on asset filter", () => {
+    const data = [
+      new Company("eternit3", 2.5, 20),
+      new Company("tasa3", 2, 30),
+      new Company("tasa4", 5, 40),
+    ];
+    const formula = new MagicFormula(data);
 
-  get returnOnAsset() {
-    return this._returnOnAsset;
-  }
-}
+    formula.filterReturnOnAsset(25, 50);
+
+    formula.companies.forEach((c) => {
+      expect(c.returnOnAsset >= 25).toBeTruthy();
+      expect(c.returnOnAsset <= 50).toBeTruthy();
+    });
+  });
+
+  describe("points", () => {
+    let data: Company[];
+
+    beforeEach(() => {
+      data = [
+        new Company("eternit3", 2, 20),
+        new Company("tasa4", 3, 10),
+        new Company("pmam3", 4, 30),
+      ];
+    });
+
+    test("should be different then 0", () => {
+      const formula = new MagicFormula(data);
+
+      formula.doMagic();
+
+      formula.companies.forEach((c) => {
+        expect(c.points.priceEarnings).not.toBe(0);
+        expect(c.points.returnOnAsset).not.toBe(0);
+      });
+    });
+
+    test("companies should have right priceEarnings points", () => {
+      const formula = new MagicFormula(data);
+
+      formula.doMagic();
+
+      const eternit = formula.companies.find((c) => c.ticket == "eternit3");
+      const taurus = formula.companies.find((c) => c.ticket == "tasa4");
+      const paranapanema = formula.companies.find((c) => c.ticket == "pmam3");
+
+      expect(eternit?.points.priceEarnings).toBe(1);
+      expect(taurus?.points.priceEarnings).toBe(2);
+      expect(paranapanema?.points.priceEarnings).toBe(3);
+    });
+
+    test("companies should have right returnOnAsset points", () => {
+      const formula = new MagicFormula(data);
+
+      formula.doMagic();
+
+      const eternit = formula.companies.find((c) => c.ticket == "eternit3");
+      const taurus = formula.companies.find((c) => c.ticket == "tasa4");
+      const paranapanema = formula.companies.find((c) => c.ticket == "pmam3");
+
+      expect(eternit?.points.returnOnAsset).toBe(2);
+      expect(taurus?.points.returnOnAsset).toBe(1);
+      expect(paranapanema?.points.returnOnAsset).toBe(3);
+    });
+  });
+});
 
 class MagicFormula {
   private _companies: Company[];
 
   constructor(companies: Company[]) {
     this._companies = companies;
+  }
+
+  doMagic() {
+    this.addPoints("priceEarnings");
+    this.addPoints("returnOnAsset");
+  }
+
+  private addPoints(aProperty: string) {
+    const key: any = aProperty;
+
+    this._companies = this._companies
+      .sort((a: any, b: any) => {
+        if (a[key] > b[key]) return 1;
+        if (a[key] < b[key]) return -1;
+
+        return 0;
+      })
+      .map((company: any, index) => {
+        company.points[key] = index + 1;
+
+        return company;
+      });
   }
 
   filterPriceEarnings(start: number, end: number) {
@@ -50,36 +133,52 @@ class MagicFormula {
   }
 }
 
-describe("magic formula", () => {
-  test("should apply price earnings filter", () => {
-    const data = [
-      new Company("eternit3", 2.5, 20),
-      new Company("eternit3", 2, 20),
-      new Company("eternit3", 5, 20),
-    ];
-    const formula = new MagicFormula(data);
+class Company {
+  private _ticket: string;
+  private _priceEarnings: number;
+  private _returnOnAsset: number;
+  private _points: Points = new Points();
 
-    formula.filterPriceEarnings(2.5, 4);
+  constructor(ticket: string, priceEarnings: number, returnOnAsset: number) {
+    this._ticket = ticket;
+    this._priceEarnings = priceEarnings;
+    this._returnOnAsset = returnOnAsset;
+  }
 
-    formula.companies.forEach((c) => {
-      expect(c.priceEarnings >= 2.5).toBeTruthy();
-      expect(c.priceEarnings <= 4).toBeTruthy();
-    });
-  });
+  get ticket() {
+    return this._ticket;
+  }
 
-  test("should apply return on assetfilter", () => {
-    const data = [
-      new Company("eternit3", 2.5, 20),
-      new Company("tasa3", 2, 30),
-      new Company("tasa4", 5, 40),
-    ];
-    const formula = new MagicFormula(data);
+  get priceEarnings() {
+    return this._priceEarnings;
+  }
 
-    formula.filterReturnOnAsset(25, 50);
+  get returnOnAsset() {
+    return this._returnOnAsset;
+  }
 
-    formula.companies.forEach((c) => {
-      expect(c.returnOnAsset >= 25).toBeTruthy();
-      expect(c.returnOnAsset <= 50).toBeTruthy();
-    });
-  });
-});
+  get points() {
+    return this._points;
+  }
+}
+
+class Points {
+  private _priceEarnings: number = 0;
+  private _returnOnAsset: number = 0;
+
+  get priceEarnings() {
+    return this._priceEarnings;
+  }
+
+  set priceEarnings(aValue) {
+    this._priceEarnings = aValue;
+  }
+
+  get returnOnAsset() {
+    return this._returnOnAsset;
+  }
+
+  set returnOnAsset(aValue) {
+    this._returnOnAsset = aValue;
+  }
+}
