@@ -1,3 +1,6 @@
+import { Company } from "./company";
+import { MagicFormula } from "./magic-formula";
+
 describe("magic formula", () => {
   test("should apply price earnings filter", () => {
     const data = [
@@ -82,113 +85,23 @@ describe("magic formula", () => {
       expect(formula.findByTicket("tasa4")?.points.total).toBe(3);
       expect(formula.findByTicket("pmam3")?.points.total).toBe(6);
     });
+
+    test("companies should be ordered by total points", () => {
+      const data = [
+        new Company("eternit3", 1, 40),
+        new Company("eternit3", 3, 30),
+        new Company("eternit3", 2, 20),
+      ];
+
+      const formula = new MagicFormula(data);
+
+      formula.doMagic();
+
+      for (let i = 1; i < formula.companies.length; i++) {
+        expect(formula.companies[i].points.total).toBeGreaterThan(
+          formula.companies[i - 1].points.total
+        );
+      }
+    });
   });
 });
-
-class MagicFormula {
-  private _companies: Company[];
-
-  constructor(companies: Company[]) {
-    this._companies = companies;
-  }
-
-  doMagic() {
-    this.addPoints("priceEarnings");
-    this.addPoints("returnOnAsset");
-  }
-
-  private addPoints(aProperty: string) {
-    const key: any = aProperty;
-
-    this._companies = this._companies
-      .sort((a: any, b: any) => {
-        if (a[key] > b[key]) return 1;
-        if (a[key] < b[key]) return -1;
-
-        return 0;
-      })
-      .map((company: any, index) => {
-        company.points[key] = index + 1;
-
-        return company;
-      });
-  }
-
-  findByTicket(aValue: string) {
-    return this.companies.find((c) => c.ticket == aValue);
-  }
-
-  filterPriceEarnings(start: number, end: number) {
-    this.filterCompanies((c: Company) => {
-      return c.priceEarnings >= start && c.priceEarnings <= end;
-    });
-  }
-
-  filterReturnOnAsset(start: number, end: number) {
-    this.filterCompanies((c: Company) => {
-      return c.returnOnAsset >= start && c.returnOnAsset <= end;
-    });
-  }
-
-  private filterCompanies(expression: (c: Company) => boolean) {
-    this._companies = this._companies.filter((c) => expression(c));
-  }
-
-  get companies() {
-    return this._companies;
-  }
-}
-
-class Company {
-  private _ticket: string;
-  private _priceEarnings: number;
-  private _returnOnAsset: number;
-  private _points: Points = new Points();
-
-  constructor(ticket: string, priceEarnings: number, returnOnAsset: number) {
-    this._ticket = ticket;
-    this._priceEarnings = priceEarnings;
-    this._returnOnAsset = returnOnAsset;
-  }
-
-  get ticket() {
-    return this._ticket;
-  }
-
-  get priceEarnings() {
-    return this._priceEarnings;
-  }
-
-  get returnOnAsset() {
-    return this._returnOnAsset;
-  }
-
-  get points() {
-    return this._points;
-  }
-}
-
-class Points {
-  private _priceEarnings: number = 0;
-  private _returnOnAsset: number = 0;
-
-  get priceEarnings() {
-    return this._priceEarnings;
-  }
-
-  set priceEarnings(aValue) {
-    this._priceEarnings = aValue;
-  }
-
-  get returnOnAsset() {
-    return this._returnOnAsset;
-  }
-
-  set returnOnAsset(aValue) {
-    this._returnOnAsset = aValue;
-  }
-
-  get total() {
-    return this._priceEarnings + this._returnOnAsset;
-  }
-}
