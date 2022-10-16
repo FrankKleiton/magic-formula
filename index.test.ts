@@ -58,13 +58,9 @@ describe("magic formula", () => {
 
       formula.doMagic();
 
-      const eternit = formula.companies.find((c) => c.ticket == "eternit3");
-      const taurus = formula.companies.find((c) => c.ticket == "tasa4");
-      const paranapanema = formula.companies.find((c) => c.ticket == "pmam3");
-
-      expect(eternit?.points.priceEarnings).toBe(1);
-      expect(taurus?.points.priceEarnings).toBe(2);
-      expect(paranapanema?.points.priceEarnings).toBe(3);
+      expect(formula.findByTicket("eternit3")?.points.priceEarnings).toBe(1);
+      expect(formula.findByTicket("tasa4")?.points.priceEarnings).toBe(2);
+      expect(formula.findByTicket("pmam3")?.points.priceEarnings).toBe(3);
     });
 
     test("companies should have right returnOnAsset points", () => {
@@ -72,13 +68,9 @@ describe("magic formula", () => {
 
       formula.doMagic();
 
-      const eternit = formula.companies.find((c) => c.ticket == "eternit3");
-      const taurus = formula.companies.find((c) => c.ticket == "tasa4");
-      const paranapanema = formula.companies.find((c) => c.ticket == "pmam3");
-
-      expect(eternit?.points.returnOnAsset).toBe(2);
-      expect(taurus?.points.returnOnAsset).toBe(1);
-      expect(paranapanema?.points.returnOnAsset).toBe(3);
+      expect(formula.findByTicket("eternit3")?.points.returnOnAsset).toBe(2);
+      expect(formula.findByTicket("tasa4")?.points.returnOnAsset).toBe(1);
+      expect(formula.findByTicket("pmam3")?.points.returnOnAsset).toBe(3);
     });
   });
 });
@@ -110,6 +102,10 @@ class MagicFormula {
 
         return company;
       });
+  }
+
+  findByTicket(aValue: string) {
+    return this.companies.find((c) => c.ticket == aValue);
   }
 
   filterPriceEarnings(start: number, end: number) {
