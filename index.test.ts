@@ -72,6 +72,16 @@ describe("magic formula", () => {
       expect(formula.findByTicket("tasa4")?.points.returnOnAsset).toBe(1);
       expect(formula.findByTicket("pmam3")?.points.returnOnAsset).toBe(3);
     });
+
+    test("companies should have right total points", () => {
+      const formula = new MagicFormula(data);
+
+      formula.doMagic();
+
+      expect(formula.findByTicket("eternit3")?.points.total).toBe(3);
+      expect(formula.findByTicket("tasa4")?.points.total).toBe(3);
+      expect(formula.findByTicket("pmam3")?.points.total).toBe(6);
+    });
   });
 });
 
@@ -176,5 +186,9 @@ class Points {
 
   set returnOnAsset(aValue) {
     this._returnOnAsset = aValue;
+  }
+
+  get total() {
+    return this._priceEarnings + this._returnOnAsset;
   }
 }
