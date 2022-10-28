@@ -3,7 +3,7 @@ import { RunMagicFormulaUsecase } from "../domain/usecases/run-magic-formula-use
 import { CompanyGatewayFake } from "./company-gateway-fake";
 
 describe("run formula usecase", () => {
-  test("should run formula", () => {
+  test("should run formula", async () => {
     const usecase = new RunMagicFormulaUsecase();
     const gateway = new CompanyGatewayFake();
     const presenter = new RunMagicFormulaPresenter();
@@ -11,8 +11,9 @@ describe("run formula usecase", () => {
     usecase.addGateway(gateway);
     usecase.addPresenter(presenter);
 
-    usecase.run();
+    await usecase.run();
 
+    console.log("presenter", presenter.getInvokedResponse());
     expect(presenter.getInvokedResponse().length).toBeGreaterThan(1);
 
     for (let i = 1; i < presenter.getInvokedResponse().length; i++) {

@@ -6,9 +6,9 @@ class RunMagicFormulaUsecase {
   private _gateway?: Gateway;
   private _presenter?: Presenter;
 
-  run() {
+  async run() {
     if (this._gateway && this._presenter) {
-      const result = this._gateway.list();
+      const result = await this._gateway.list();
 
       const magicFormula = new MagicFormula(result);
 
