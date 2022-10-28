@@ -1,5 +1,5 @@
-import { Company } from "./company";
-import { MagicFormula } from "./magic-formula";
+import { Company } from "../domain/entities/company";
+import { MagicFormula } from "../domain/entities/magic-formula";
 
 describe("magic formula", () => {
   test("should apply price earnings filter", () => {
