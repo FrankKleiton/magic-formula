@@ -1,4 +1,5 @@
 import { Company } from "../domain/entities/company";
+import { Filter } from "../domain/entities/filter";
 import { MagicFormula } from "../domain/entities/magic-formula";
 
 describe("magic formula", () => {
@@ -8,9 +9,12 @@ describe("magic formula", () => {
       new Company("eternit3", 2, 20),
       new Company("eternit3", 5, 20),
     ];
-    const formula = new MagicFormula(data);
 
-    formula.filterPriceEarnings(2.5, 4);
+    const filter = new Filter(data);
+
+    filter.filter("priceEarnings", 2.5, 4);
+
+    const formula = new MagicFormula(filter.result());
 
     formula.companies.forEach((c) => {
       expect(c.priceEarnings >= 2.5).toBeTruthy();
@@ -24,9 +28,12 @@ describe("magic formula", () => {
       new Company("tasa3", 2, 30),
       new Company("tasa4", 5, 40),
     ];
-    const formula = new MagicFormula(data);
 
-    formula.filterReturnOnAsset(25, 50);
+    const filter = new Filter(data);
+
+    filter.filter("returnOnAsset", 25, 50);
+
+    const formula = new MagicFormula(filter.result());
 
     formula.companies.forEach((c) => {
       expect(c.returnOnAsset >= 25).toBeTruthy();

@@ -1,6 +1,7 @@
 import { Gateway } from "../interfaces/gateway";
 import { MagicFormula } from "../entities/magic-formula";
 import { Presenter } from "../interfaces/presenter";
+import { Filter } from "../entities/filter";
 
 class RunMagicFormulaUsecase {
   private _gateway?: Gateway;
@@ -10,10 +11,11 @@ class RunMagicFormulaUsecase {
     if (this._gateway && this._presenter) {
       const result = await this._gateway.list();
 
-      const magicFormula = new MagicFormula(result);
+      const filter = new Filter(result);
+      filter.filter("priceEarnings", 2, 25);
+      filter.filter("returnOnAsset", 10, 100);
 
-      magicFormula.filterPriceEarnings(2, 25);
-      magicFormula.filterReturnOnAsset(10, 100);
+      const magicFormula = new MagicFormula(filter.result());
 
       magicFormula.doMagic();
 
