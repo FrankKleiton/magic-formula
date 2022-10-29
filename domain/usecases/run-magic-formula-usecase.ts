@@ -12,6 +12,9 @@ class RunMagicFormulaUsecase {
 
       const magicFormula = new MagicFormula(result);
 
+      magicFormula.filterPriceEarnings(2, 25);
+      magicFormula.filterReturnOnAsset(10, 100);
+
       magicFormula.doMagic();
 
       this._presenter.present(magicFormula.companies);
