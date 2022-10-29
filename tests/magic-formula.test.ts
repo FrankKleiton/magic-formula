@@ -72,8 +72,8 @@ describe("magic formula", () => {
       formula.doMagic();
 
       expect(formula.findByTicket("eternit3")?.points.returnOnAsset).toBe(2);
-      expect(formula.findByTicket("tasa4")?.points.returnOnAsset).toBe(1);
-      expect(formula.findByTicket("pmam3")?.points.returnOnAsset).toBe(3);
+      expect(formula.findByTicket("tasa4")?.points.returnOnAsset).toBe(3);
+      expect(formula.findByTicket("pmam3")?.points.returnOnAsset).toBe(1);
     });
 
     test("companies should have right total points", () => {
@@ -82,8 +82,8 @@ describe("magic formula", () => {
       formula.doMagic();
 
       expect(formula.findByTicket("eternit3")?.points.total).toBe(3);
-      expect(formula.findByTicket("tasa4")?.points.total).toBe(3);
-      expect(formula.findByTicket("pmam3")?.points.total).toBe(6);
+      expect(formula.findByTicket("tasa4")?.points.total).toBe(5);
+      expect(formula.findByTicket("pmam3")?.points.total).toBe(4);
     });
 
     test("companies should be ordered by total points", () => {
@@ -98,7 +98,7 @@ describe("magic formula", () => {
       formula.doMagic();
 
       for (let i = 1; i < formula.companies.length; i++) {
-        expect(formula.companies[i].points.total).toBeGreaterThan(
+        expect(formula.companies[i].points.total).toBeGreaterThanOrEqual(
           formula.companies[i - 1].points.total
         );
       }

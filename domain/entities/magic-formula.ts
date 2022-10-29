@@ -9,7 +9,8 @@ class MagicFormula {
 
   doMagic() {
     this.addPoints("priceEarnings");
-    this.addPoints("returnOnAsset");
+    this.addPoints("returnOnAsset", false);
+
     this.sortByTotal();
   }
 
@@ -22,13 +23,13 @@ class MagicFormula {
     });
   }
 
-  private addPoints(aProperty: string) {
+  private addPoints(aProperty: string, asc: boolean = true) {
     const key: any = aProperty;
 
     this._companies = this._companies
       .sort((a: any, b: any) => {
-        if (a[key] > b[key]) return 1;
-        if (a[key] < b[key]) return -1;
+        if (asc ? a[key] > b[key] : a[key] < b[key]) return 1;
+        if (asc ? a[key] < b[key] : a[key] > b[key]) return -1;
 
         return 0;
       })

@@ -13,12 +13,11 @@ describe("run formula usecase", () => {
 
     await usecase.run();
 
-    console.log("presenter", presenter.getInvokedResponse());
     expect(presenter.getInvokedResponse().length).toBeGreaterThan(1);
 
     for (let i = 1; i < presenter.getInvokedResponse().length; i++) {
       const companies = presenter.getInvokedResponse();
-      expect(companies[i].points.total).toBeGreaterThan(
+      expect(companies[i].points.total).toBeGreaterThanOrEqual(
         companies[i - 1].points.total
       );
     }
