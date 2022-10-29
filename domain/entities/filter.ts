@@ -8,6 +8,12 @@ class Filter {
   }
 
   filter(aProperty: string, start: number, end: number) {
+    const firstValue: any = this._data[0];
+
+    if (end < start) throw new Error("Invalid range!");
+
+    if (!firstValue[aProperty]) throw new Error("Invalid property!");
+
     this.filterCompanies((c: any) => {
       return c[aProperty] >= start && c[aProperty] <= end;
     });
